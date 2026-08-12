@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Nutritional Insights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
+
+        <h1 class="text-2xl font-semibold mb-6 text-center">
+            Login
+        </h1>
+
+        <form id="loginForm" class="flex flex-col gap-4">
+
+            <input
+                id="email"
+                type="email"
+                placeholder="Email"
+                required
+                class="p-2 border rounded"
+            >
+
+            <input
+                id="password"
+                type="password"
+                placeholder="Password"
+                required
+                class="p-2 border rounded"
+            >
+
+            <button
+                type="submit"
+                class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+            >
+                Log In
+            </button>
+
+        </form>
+
+        <p id="errorMessage" class="text-red-600 text-sm mt-4 text-center"></p>
+
+        <p class="text-sm text-gray-600 mt-6 text-center">
+            Don't have an account?
+            <a href="register.html" class="text-blue-600 hover:underline">Register</a>
+        </p>
+
+    </div>
+
+    <script>
+
+        const loginUrl =
+            "https://diet-analysis-george-func.azurewebsites.net/api/login";
+
+        document.getElementById("loginForm").addEventListener(
+            "submit",
+            async (e) => {
+
+                e.preventDefault();
+
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value;
+                const errorMessage = document.getElementById("errorMessage");
+
+                errorMessage.textContent = "";
+
+                try {
+
+                    const response = await fetch(loginUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        errorMessage.textContent =
+                            data.error || "Login failed.";
+                        return;
+                    }
+
+                    // No token is issued by the backend, so we store
+                    // the returned user object as our logged-in session.
+                    localStorage.setItem(
+                        "authUser",
+                        JSON.stringify(data.user)
+                    );
+
+                    window.location.href = "index.html";
+
+                }
+                catch (error) {
+
+                    console.error("Login error:", error);
+
+                    errorMessage.textContent =
+                        "Unable to reach the server. Please try again.";
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>

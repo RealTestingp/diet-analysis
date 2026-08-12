@@ -14,7 +14,7 @@
 
 <body class="bg-gray-100 text-gray-900">
 
-    <header class="bg-blue-600 p-4 text-white">
+    <header class="bg-blue-600 p-4 text-white relative">
         <p class="p-4">
             Records processed:
             <span id="recordCount">Loading...</span>
@@ -22,13 +22,16 @@
             Execution time:
             <span id="execTime">Loading...</span>s
         </p>
-
-        <h1 class="text-3xl font-semibold">
-            Nutritional Insights
-        </h1>
+        
+        <div class="absolute top-4 right-4 flex items-center gap-3 text-white">
+            <span id="usernameDisplay" class="font-medium"></span>
+            <button id="logoutButton" class="bg-red-600 py-1 px-3 rounded hover:bg-red-700 text-sm">
+                Logout
+            </button>
+        </div>
     </header>
 
-    <main class="container mx-auto p-6">
+    <main class="max-w-6xl mx-auto p-6">
 
         <!-- Charts -->
         <section class="mb-8">
@@ -48,7 +51,9 @@
                         Average macronutrient content by diet type.
                     </p>
 
-                    <canvas id="barChart" class="w-full h-48"></canvas>
+                    <div style="height: 200px; position: relative;">
+                        <canvas id="barChart"></canvas>
+                    </div>
                 </div>
 
                 <!-- Top Protein Recipes -->
@@ -61,7 +66,9 @@
                         Recipes with the highest protein content.
                     </p>
 
-                    <canvas id="scatterPlot" class="w-full h-48"></canvas>
+                    <div style="height: 200px; position: relative;">
+                        <canvas id="scatterPlot"></canvas>
+                    </div>
                 </div>
 
                 <!-- Common Cuisine -->
@@ -87,7 +94,9 @@
                         Recipe distribution by diet type.
                     </p>
 
-                    <canvas id="pieChart" class="w-full h-48"></canvas>
+                    <div style="height: 200px; position: relative;">
+                        <canvas id="pieChart"></canvas>
+                    </div>
                 </div>
 
             </div>
@@ -323,6 +332,19 @@
 
 
     <script>
+        // --- Login gate ---
+        const authUser = JSON.parse(localStorage.getItem("authUser") || "null");
+
+        if (!authUser) {
+        window.location.href = "login.html";
+        }
+
+        document.getElementById("usernameDisplay").textContent = authUser ? authUser.name : "";
+
+        document.getElementById("logoutButton").addEventListener("click", () => {
+        localStorage.removeItem("authUser");
+            window.location.href = "login.html";
+        });
 
         /*
          * Azure Function API
